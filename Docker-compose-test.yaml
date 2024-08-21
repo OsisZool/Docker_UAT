@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  api-test:
+      build: ./api
+      image: sdpx/api:test
+      ports:
+        - "8082:5000"
+      environment:
+        - FLASK_ENV=development
+        - DB_HOST=db-test
+        - DB_USER=admin
+        - DB_PASSWORD=db4test$
+        - DB_NAME=users
+      networks:
+        - test-network
+      depends_on:
+        - db-test
+
+  db-test:
+    build:
+      context: ./db
+    environment:
+      MYSQL_ROOT_PASSWORD: db4test$
+      MYSQL_DATABASE: users
+    volumes:
+      - db-test-data:/var/lib/mysql
+    networks:
+      - test-network
+    
+volumes:
+  db-test-data:
+
+networks:
+  test-network:
